@@ -1,5 +1,9 @@
 # h5-cropper
 
+## 案例演示
+[https://sayll.github.io/h5-cropper/index.html](https://sayll.github.io/h5-cropper/index.html)
+> 手机模式查看，效果更佳。
+
 ## 使用方式
 
 ### 直接下载使用
