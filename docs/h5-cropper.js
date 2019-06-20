@@ -3650,7 +3650,7 @@ tpack.define("index.js", function (require, exports, module) {
 			// 确定按钮，返回图片base64
 			this.handleOk = function () {
 				_this.callback && _this.callback(_this.cropper.getCroppedCanvas({ maxWidth: 720 }).toDataURL('image/jpeg', .9), _this);
-				_this.cropper.destroy();
+				_this.handleCancel();
 			};
 			// 旋转图片
 			this.handleRotate = function () {
@@ -3676,7 +3676,9 @@ tpack.define("index.js", function (require, exports, module) {
 		}
 		H5Cropper.prototype.init = function ($image, callback, options) {
 			var _this = this;
-			this.cropper = new CropperJS($image, __assign({ viewMode: 1, cropBoxResizable: true, minCropBoxWidth: 100, dragMode: 'move', highlight: false, aspectRatio: 5 / 7, center: false, zoomOnTouch: false }, options, { ready: function (event) {
+			this.cropper = new CropperJS($image, __assign({ viewMode: 1, cropBoxResizable: true, minCropBoxWidth: 100, dragMode: 'move', highlight: false,
+				// aspectRatio: 5 / 7,
+				center: false, zoomOnTouch: false }, options, { ready: function (event) {
 					_this.root.setAttribute('style', 'opacity: 1; transition: all .4s;');
 					options.read && options.read(event);
 				} }));

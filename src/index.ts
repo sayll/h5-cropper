@@ -78,7 +78,7 @@ class H5Cropper {
       minCropBoxWidth: 100,
       dragMode: 'move',
       highlight: false,
-      aspectRatio: 5 / 7,
+      // aspectRatio: 5 / 7,
       center: false,
       zoomOnTouch: false,
       ...options,
@@ -106,7 +106,7 @@ class H5Cropper {
   // 确定按钮，返回图片base64
   handleOk = () => {
     this.callback && this.callback(this.cropper.getCroppedCanvas({maxWidth: 720}).toDataURL('image/jpeg', .9), this)
-    this.cropper.destroy()
+    this.handleCancel()
   }
 
   // 旋转图片
