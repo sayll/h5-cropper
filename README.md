@@ -1,7 +1,39 @@
 # h5-cropper
+移动端图片裁剪器，基于 `cropperjs` 制作的简单裁剪器
 
 ## 案例演示
-[https://sayll.github.io/h5-cropper/index.html](https://sayll.github.io/h5-cropper/index.html)
+HTML部分：
+```html
+<!DOCTYPE html>
+<html lang="cn">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no" />
+  <title>裁剪案例</title>
+</head>
+<script src="./h5-cropper.js"></script>
+<body style="font-size: 14px">
+  <img id="image" src="http://placekitten.com/g/720/400" width="100%" alt="">
+  <div>
+    <button style="width: 100%; font-size: 18px;" id="button">开始裁剪</button>
+  </div>
+</body>
+<script src="./index.js"></script>
+</html>
+```
+
+JS部分：
+```javascript
+const img = document.getElementById('image')
+
+document.getElementById('button').onclick = function () {
+  var cropper = new window.H5Cropper(img.src, function (base64) {
+    img.src = base64
+  })
+}
+```
+
+演示案例：[https://sayll.github.io/h5-cropper/index.html](https://sayll.github.io/h5-cropper/index.html)
 > 手机模式查看，效果更佳。
 
 ## 使用方式

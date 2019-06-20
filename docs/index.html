@@ -1,31 +1,16 @@
 <!DOCTYPE html>
-<html lang="cn" style="font-size: 32px">
+<html lang="cn">
 <head>
   <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no" />
   <title>裁剪案例</title>
 </head>
-<script>
-  // 等比例缩放方案
-  (function () {
-    var designWidth = 750 // 设计稿宽度
-    var deviceWidth = window.screen.width // 布局视图宽度
-    // var deviceRatio = window.devicePixelRatio || 1 // 设备像素比例
-    var scale = deviceWidth / designWidth // 缩放比例
-    var densitydpi = 'device-dpi' // 旧版 Android 兼容
-    var viewprotFit = 'cover' // iPhoneX 兼容
-    var meta = '<meta name="viewport" content="user-scalable=no, width=' + designWidth
-      + ', initial-scale=' + scale + ', minimum-scale=' + scale + ', maximum-scale=' + scale
-      + ', target-densitydpi=' + densitydpi + ', viewprot-fit=' + viewprotFit
-      + '">'
-    document.write(meta)
-  })()
-</script>
 <script src="./h5-cropper.js"></script>
 <!--<script src="../dist/index.js"></script>-->
-<body style="font-size: 24px">
-  <img id="image" src="http://placekitten.com/g/720/400" width="720" alt="">
+<body style="font-size: 14px">
+  <img id="image" src="http://placekitten.com/g/720/400" width="100%" alt="">
   <div>
-    <button style="width: 100%; font-size: 36px;" id="button">开始裁剪</button>
+    <button style="width: 100%; font-size: 18px;" id="button">开始裁剪</button>
   </div>
 </body>
 <script src="./index.js"></script>
