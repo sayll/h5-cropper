@@ -3650,6 +3650,7 @@ tpack.define("index.js", function (require, exports, module) {
 	        // 确定按钮，返回图片base64
 	        this.handleOk = function () {
 	            _this.callback && _this.callback(_this.cropper.getCroppedCanvas({ maxWidth: 720 }).toDataURL('image/jpeg', .9), _this);
+	            _this.cropper.destroy();
 	        };
 	        // 旋转图片
 	        this.handleRotate = function () {

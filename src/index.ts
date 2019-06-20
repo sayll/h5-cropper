@@ -106,6 +106,7 @@ class H5Cropper {
   // 确定按钮，返回图片base64
   handleOk = () => {
     this.callback && this.callback(this.cropper.getCroppedCanvas({maxWidth: 720}).toDataURL('image/jpeg', .9), this)
+    this.cropper.destroy()
   }
 
   // 旋转图片
