@@ -2,7 +2,6 @@
 
 ## 生成文件
 _*/
-dist/
 
 ## Node.js
 node_modules/
