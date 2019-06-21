@@ -1,6 +1,6 @@
 {
   "name": "h5-cropper",
-  "version": "0.0.1-beta.3",
+  "version": "0.0.1-beta.4",
   "description": "移动端图片裁剪器",
   "main": "dist/index.js",
   "types": "src/index.ts",

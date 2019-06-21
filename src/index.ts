@@ -20,7 +20,7 @@ class H5Cropper {
     this.root = document.createElement('div')
     this.root.setAttribute('style', 'opacity: 0; transition: all .4s;')
     this.root.innerHTML = `<div style="position: absolute;top: 0;left: 0;right: 0;bottom: 0;z-index: 1000;">
-      <div style="position: absolute;top: 0;left: 0;right: 0;bottom: 5.3em;z-index: 1000;">
+      <div style="position: absolute;top: 0;left: 0;right: 0;bottom: 5.3em;z-index: 1000; overflow: hidden;">
         <img id="${this.id}" src="${image}" alt="image">
       </div>
       <div style="
