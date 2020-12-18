@@ -1,5 +1,5 @@
 import 'cropperjs/dist/cropper.css'
-import CropperJS from 'cropperjs'
+const CropperJS = require('cropperjs')
 
 let key = 0
 function getUuid() {

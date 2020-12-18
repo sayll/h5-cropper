@@ -1198,10 +1198,10 @@ tough-cookie@~2.5.0:
     psl "^1.1.28"
     punycode "^2.1.1"
 
-tpack@2.9.1:
-  version "2.9.1"
-  resolved "https://registry.npmjs.org/tpack/-/tpack-2.9.1.tgz#2f25a28a1fa70f424c409f8a3c6ee9fdd462c800"
-  integrity sha512-mhpYy1zQfvB7CEx+eWOkfku9ThLJqrazeBjbZFyQ3U/DpCJY2EQt76HTTVRkG2wBZ5UDwdysFe/w5Nfz+U3oCQ==
+tpack@2.9.0:
+  version "2.9.0"
+  resolved "http://npm.crgt.xyz/tpack/-/tpack-2.9.0.tgz#704e418a6d6857592f92ef36e35d299ff86a26c5"
+  integrity sha1-cE5Bim1oV1kvku82410pn/hqJsU=
   optionalDependencies:
     v8-compile-cache "^2.0.3"
 
