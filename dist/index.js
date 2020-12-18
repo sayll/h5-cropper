@@ -1,7 +1,7 @@
-var tpack = tpack || {
-	cache: { __proto__: null },
+var TPack = TPack || {
+	modules: { __proto__: null },
 	define: function (moduleName, factory) {
-		tpack.cache[moduleName.toLowerCase()] = {
+		TPack.modules[moduleName] = {
 			loaded: false,
 			define: factory,
 			exports: {}
@@ -9,13 +9,13 @@ var tpack = tpack || {
 	},
 	require: function (moduleName, callback, data) {
 		if (typeof moduleName === "string") {
-			var module = tpack.cache[moduleName.toLowerCase()];
+			var module = TPack.modules[moduleName];
 			if (typeof callback === "function") {
 				if (module) {
-					setTimeout(callback, 0, tpack.require(moduleName), data);
+					setTimeout(callback, 0, TPack.require(moduleName), data);
 				} else {
-					tpack.async((tpack.baseUrl || "") + moduleName + (tpack.urlArgs || ""), function () {
-						callback(tpack.require(moduleName), data);
+					TPack.script((TPack.baseUrl || "") + moduleName + (TPack.urlArgs || ""), function () {
+						callback(TPack.require(moduleName), data);
 					});
 				}
 			} else {
@@ -24,10 +24,7 @@ var tpack = tpack || {
 				}
 				if (!module.loaded) {
 					module.loaded = true;
-					module.define(tpack.require, module.exports, module);
-				}
-				if (module.exports.__esModule && module.exports["default"] !== undefined){
-					return module.exports["default"]
+					module.define(TPack.require, module.exports, module);
 				}
 				return module.exports;
 			}
@@ -36,7 +33,7 @@ var tpack = tpack || {
 			if (pending) {
 				var exports = [];
 				for (var i = 0; i < pending; i++) {
-					tpack.require(moduleName[i], function (moduleExport, i) {
+					TPack.require(moduleName[i], function (moduleExport, i) {
 						exports[i] = moduleExport;
 						--pending < 1 && callback && callback.apply(this, exports);
 					}, i);
@@ -46,7 +43,7 @@ var tpack = tpack || {
 			}
 		}
 	},
-	async: function (url, callback) {
+	script: function (url, callback) {
 		var script = document.createElement("script");
 		script.async = true;
 		script.onload = callback;
@@ -54,28 +51,28 @@ var tpack = tpack || {
 		return (document.head || document.getElementsByTagName("head")[0] || document.documentElement).appendChild(script);
 	},
 	style: function (content) {
-		return (document.head || document.getElementsByTagName("head")[0] || document.documentElement).appendChild(document.createElement('style')).innerHTML = content;
+		return (document.head || document.getElementsByTagName("head")[0] || document.documentElement).appendChild(document.createElement("style")).innerHTML = content;
 	}
 };
 
-tpack.define("../node_modules/cropperjs/dist/cropper.css", function (require, exports, module) {
-	module.exports = tpack.style("/*!\n * Cropper.js v1.5.1\n * https://fengyuanchen.github.io/cropperjs\n *\n * Copyright 2015-present Chen Fengyuan\n * Released under the MIT license\n *\n * Date: 2019-03-10T09:55:50.492Z\n */\n\n.cropper-container {\n  direction: ltr;\n  font-size: 0;\n  line-height: 0;\n  position: relative;\n  -ms-touch-action: none;\n  touch-action: none;\n  -webkit-user-select: none;\n  -moz-user-select: none;\n  -ms-user-select: none;\n  user-select: none;\n}\n\n.cropper-container img {\n  display: block;\n  height: 100%;\n  image-orientation: 0deg;\n  max-height: none !important;\n  max-width: none !important;\n  min-height: 0 !important;\n  min-width: 0 !important;\n  width: 100%;\n}\n\n.cropper-wrap-box,\n.cropper-canvas,\n.cropper-drag-box,\n.cropper-crop-box,\n.cropper-modal {\n  bottom: 0;\n  left: 0;\n  position: absolute;\n  right: 0;\n  top: 0;\n}\n\n.cropper-wrap-box,\n.cropper-canvas {\n  overflow: hidden;\n}\n\n.cropper-drag-box {\n  background-color: #fff;\n  opacity: 0;\n}\n\n.cropper-modal {\n  background-color: #000;\n  opacity: 0.5;\n}\n\n.cropper-view-box {\n  display: block;\n  height: 100%;\n  outline: 1px solid #39f;\n  outline-color: rgba(51, 153, 255, 0.75);\n  overflow: hidden;\n  width: 100%;\n}\n\n.cropper-dashed {\n  border: 0 dashed #eee;\n  display: block;\n  opacity: 0.5;\n  position: absolute;\n}\n\n.cropper-dashed.dashed-h {\n  border-bottom-width: 1px;\n  border-top-width: 1px;\n  height: calc(100% / 3);\n  left: 0;\n  top: calc(100% / 3);\n  width: 100%;\n}\n\n.cropper-dashed.dashed-v {\n  border-left-width: 1px;\n  border-right-width: 1px;\n  height: 100%;\n  left: calc(100% / 3);\n  top: 0;\n  width: calc(100% / 3);\n}\n\n.cropper-center {\n  display: block;\n  height: 0;\n  left: 50%;\n  opacity: 0.75;\n  position: absolute;\n  top: 50%;\n  width: 0;\n}\n\n.cropper-center::before,\n.cropper-center::after {\n  background-color: #eee;\n  content: ' ';\n  display: block;\n  position: absolute;\n}\n\n.cropper-center::before {\n  height: 1px;\n  left: -3px;\n  top: 0;\n  width: 7px;\n}\n\n.cropper-center::after {\n  height: 7px;\n  left: 0;\n  top: -3px;\n  width: 1px;\n}\n\n.cropper-face,\n.cropper-line,\n.cropper-point {\n  display: block;\n  height: 100%;\n  opacity: 0.1;\n  position: absolute;\n  width: 100%;\n}\n\n.cropper-face {\n  background-color: #fff;\n  left: 0;\n  top: 0;\n}\n\n.cropper-line {\n  background-color: #39f;\n}\n\n.cropper-line.line-e {\n  cursor: ew-resize;\n  right: -3px;\n  top: 0;\n  width: 5px;\n}\n\n.cropper-line.line-n {\n  cursor: ns-resize;\n  height: 5px;\n  left: 0;\n  top: -3px;\n}\n\n.cropper-line.line-w {\n  cursor: ew-resize;\n  left: -3px;\n  top: 0;\n  width: 5px;\n}\n\n.cropper-line.line-s {\n  bottom: -3px;\n  cursor: ns-resize;\n  height: 5px;\n  left: 0;\n}\n\n.cropper-point {\n  background-color: #39f;\n  height: 5px;\n  opacity: 0.75;\n  width: 5px;\n}\n\n.cropper-point.point-e {\n  cursor: ew-resize;\n  margin-top: -3px;\n  right: -3px;\n  top: 50%;\n}\n\n.cropper-point.point-n {\n  cursor: ns-resize;\n  left: 50%;\n  margin-left: -3px;\n  top: -3px;\n}\n\n.cropper-point.point-w {\n  cursor: ew-resize;\n  left: -3px;\n  margin-top: -3px;\n  top: 50%;\n}\n\n.cropper-point.point-s {\n  bottom: -3px;\n  cursor: s-resize;\n  left: 50%;\n  margin-left: -3px;\n}\n\n.cropper-point.point-ne {\n  cursor: nesw-resize;\n  right: -3px;\n  top: -3px;\n}\n\n.cropper-point.point-nw {\n  cursor: nwse-resize;\n  left: -3px;\n  top: -3px;\n}\n\n.cropper-point.point-sw {\n  bottom: -3px;\n  cursor: nesw-resize;\n  left: -3px;\n}\n\n.cropper-point.point-se {\n  bottom: -3px;\n  cursor: nwse-resize;\n  height: 20px;\n  opacity: 1;\n  right: -3px;\n  width: 20px;\n}\n\n@media (min-width: 768px) {\n  .cropper-point.point-se {\n    height: 15px;\n    width: 15px;\n  }\n}\n\n@media (min-width: 992px) {\n  .cropper-point.point-se {\n    height: 10px;\n    width: 10px;\n  }\n}\n\n@media (min-width: 1200px) {\n  .cropper-point.point-se {\n    height: 5px;\n    opacity: 0.75;\n    width: 5px;\n  }\n}\n\n.cropper-point.point-se::before {\n  background-color: #39f;\n  bottom: -50%;\n  content: ' ';\n  display: block;\n  height: 200%;\n  opacity: 0;\n  position: absolute;\n  right: -50%;\n  width: 200%;\n}\n\n.cropper-invisible {\n  opacity: 0;\n}\n\n.cropper-bg {\n  background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQAQMAAAAlPW0iAAAAA3NCSVQICAjb4U/gAAAABlBMVEXMzMz////TjRV2AAAACXBIWXMAAArrAAAK6wGCiw1aAAAAHHRFWHRTb2Z0d2FyZQBBZG9iZSBGaXJld29ya3MgQ1M26LyyjAAAABFJREFUCJlj+M/AgBVhF/0PAH6/D/HkDxOGAAAAAElFTkSuQmCC');\n}\n\n.cropper-hide {\n  display: block;\n  height: 0;\n  position: absolute;\n  width: 0;\n}\n\n.cropper-hidden {\n  display: none !important;\n}\n\n.cropper-move {\n  cursor: move;\n}\n\n.cropper-crop {\n  cursor: crosshair;\n}\n\n.cropper-disabled .cropper-drag-box,\n.cropper-disabled .cropper-face,\n.cropper-disabled .cropper-line,\n.cropper-disabled .cropper-point {\n  cursor: not-allowed;\n}\n");
+TPack.define("../node_modules/cropperjs/dist/cropper.css", function (require, exports, module) {
+	module.exports = TPack.style("/*!\n * Cropper.js v1.5.9\n * https://fengyuanchen.github.io/cropperjs\n *\n * Copyright 2015-present Chen Fengyuan\n * Released under the MIT license\n *\n * Date: 2020-09-10T13:16:21.689Z\n */\n\n.cropper-container {\n  direction: ltr;\n  font-size: 0;\n  line-height: 0;\n  position: relative;\n  -ms-touch-action: none;\n  touch-action: none;\n  -webkit-user-select: none;\n  -moz-user-select: none;\n  -ms-user-select: none;\n  user-select: none;\n}\n\n.cropper-container img {\n  display: block;\n  height: 100%;\n  image-orientation: 0deg;\n  max-height: none !important;\n  max-width: none !important;\n  min-height: 0 !important;\n  min-width: 0 !important;\n  width: 100%;\n}\n\n.cropper-wrap-box,\n.cropper-canvas,\n.cropper-drag-box,\n.cropper-crop-box,\n.cropper-modal {\n  bottom: 0;\n  left: 0;\n  position: absolute;\n  right: 0;\n  top: 0;\n}\n\n.cropper-wrap-box,\n.cropper-canvas {\n  overflow: hidden;\n}\n\n.cropper-drag-box {\n  background-color: #fff;\n  opacity: 0;\n}\n\n.cropper-modal {\n  background-color: #000;\n  opacity: 0.5;\n}\n\n.cropper-view-box {\n  display: block;\n  height: 100%;\n  outline: 1px solid #39f;\n  outline-color: rgba(51, 153, 255, 0.75);\n  overflow: hidden;\n  width: 100%;\n}\n\n.cropper-dashed {\n  border: 0 dashed #eee;\n  display: block;\n  opacity: 0.5;\n  position: absolute;\n}\n\n.cropper-dashed.dashed-h {\n  border-bottom-width: 1px;\n  border-top-width: 1px;\n  height: calc(100% / 3);\n  left: 0;\n  top: calc(100% / 3);\n  width: 100%;\n}\n\n.cropper-dashed.dashed-v {\n  border-left-width: 1px;\n  border-right-width: 1px;\n  height: 100%;\n  left: calc(100% / 3);\n  top: 0;\n  width: calc(100% / 3);\n}\n\n.cropper-center {\n  display: block;\n  height: 0;\n  left: 50%;\n  opacity: 0.75;\n  position: absolute;\n  top: 50%;\n  width: 0;\n}\n\n.cropper-center::before,\n.cropper-center::after {\n  background-color: #eee;\n  content: ' ';\n  display: block;\n  position: absolute;\n}\n\n.cropper-center::before {\n  height: 1px;\n  left: -3px;\n  top: 0;\n  width: 7px;\n}\n\n.cropper-center::after {\n  height: 7px;\n  left: 0;\n  top: -3px;\n  width: 1px;\n}\n\n.cropper-face,\n.cropper-line,\n.cropper-point {\n  display: block;\n  height: 100%;\n  opacity: 0.1;\n  position: absolute;\n  width: 100%;\n}\n\n.cropper-face {\n  background-color: #fff;\n  left: 0;\n  top: 0;\n}\n\n.cropper-line {\n  background-color: #39f;\n}\n\n.cropper-line.line-e {\n  cursor: ew-resize;\n  right: -3px;\n  top: 0;\n  width: 5px;\n}\n\n.cropper-line.line-n {\n  cursor: ns-resize;\n  height: 5px;\n  left: 0;\n  top: -3px;\n}\n\n.cropper-line.line-w {\n  cursor: ew-resize;\n  left: -3px;\n  top: 0;\n  width: 5px;\n}\n\n.cropper-line.line-s {\n  bottom: -3px;\n  cursor: ns-resize;\n  height: 5px;\n  left: 0;\n}\n\n.cropper-point {\n  background-color: #39f;\n  height: 5px;\n  opacity: 0.75;\n  width: 5px;\n}\n\n.cropper-point.point-e {\n  cursor: ew-resize;\n  margin-top: -3px;\n  right: -3px;\n  top: 50%;\n}\n\n.cropper-point.point-n {\n  cursor: ns-resize;\n  left: 50%;\n  margin-left: -3px;\n  top: -3px;\n}\n\n.cropper-point.point-w {\n  cursor: ew-resize;\n  left: -3px;\n  margin-top: -3px;\n  top: 50%;\n}\n\n.cropper-point.point-s {\n  bottom: -3px;\n  cursor: s-resize;\n  left: 50%;\n  margin-left: -3px;\n}\n\n.cropper-point.point-ne {\n  cursor: nesw-resize;\n  right: -3px;\n  top: -3px;\n}\n\n.cropper-point.point-nw {\n  cursor: nwse-resize;\n  left: -3px;\n  top: -3px;\n}\n\n.cropper-point.point-sw {\n  bottom: -3px;\n  cursor: nesw-resize;\n  left: -3px;\n}\n\n.cropper-point.point-se {\n  bottom: -3px;\n  cursor: nwse-resize;\n  height: 20px;\n  opacity: 1;\n  right: -3px;\n  width: 20px;\n}\n\n@media (min-width: 768px) {\n  .cropper-point.point-se {\n    height: 15px;\n    width: 15px;\n  }\n}\n\n@media (min-width: 992px) {\n  .cropper-point.point-se {\n    height: 10px;\n    width: 10px;\n  }\n}\n\n@media (min-width: 1200px) {\n  .cropper-point.point-se {\n    height: 5px;\n    opacity: 0.75;\n    width: 5px;\n  }\n}\n\n.cropper-point.point-se::before {\n  background-color: #39f;\n  bottom: -50%;\n  content: ' ';\n  display: block;\n  height: 200%;\n  opacity: 0;\n  position: absolute;\n  right: -50%;\n  width: 200%;\n}\n\n.cropper-invisible {\n  opacity: 0;\n}\n\n.cropper-bg {\n  background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQAQMAAAAlPW0iAAAAA3NCSVQICAjb4U/gAAAABlBMVEXMzMz////TjRV2AAAACXBIWXMAAArrAAAK6wGCiw1aAAAAHHRFWHRTb2Z0d2FyZQBBZG9iZSBGaXJld29ya3MgQ1M26LyyjAAAABFJREFUCJlj+M/AgBVhF/0PAH6/D/HkDxOGAAAAAElFTkSuQmCC');\n}\n\n.cropper-hide {\n  display: block;\n  height: 0;\n  position: absolute;\n  width: 0;\n}\n\n.cropper-hidden {\n  display: none !important;\n}\n\n.cropper-move {\n  cursor: move;\n}\n\n.cropper-crop {\n  cursor: crosshair;\n}\n\n.cropper-disabled .cropper-drag-box,\n.cropper-disabled .cropper-face,\n.cropper-disabled .cropper-line,\n.cropper-disabled .cropper-point {\n  cursor: not-allowed;\n}\n");
 });
 
-tpack.define("../node_modules/cropperjs/dist/cropper.common.js", function (require, exports, module) {
+TPack.define("../node_modules/cropperjs/dist/cropper.esm.js", function (require, exports, module) {
 	/*!
-	 * Cropper.js v1.5.1
+	 * Cropper.js v1.5.9
 	 * https://fengyuanchen.github.io/cropperjs
 	 *
 	 * Copyright 2015-present Chen Fengyuan
 	 * Released under the MIT license
 	 *
-	 * Date: 2019-03-10T09:55:53.729Z
+	 * Date: 2020-09-10T13:16:26.743Z
 	 */
 
-	'use strict';
-
 	function _typeof(obj) {
+	  "@babel/helpers - typeof";
+
 	  if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") {
 	    _typeof = function (obj) {
 	      return typeof obj;
@@ -111,29 +108,91 @@ tpack.define("../node_modules/cropperjs/dist/cropper.common.js", function (requi
 	  return Constructor;
 	}
 
+	function _defineProperty(obj, key, value) {
+	  if (key in obj) {
+	    Object.defineProperty(obj, key, {
+	      value: value,
+	      enumerable: true,
+	      configurable: true,
+	      writable: true
+	    });
+	  } else {
+	    obj[key] = value;
+	  }
+
+	  return obj;
+	}
+
+	function ownKeys(object, enumerableOnly) {
+	  var keys = Object.keys(object);
+
+	  if (Object.getOwnPropertySymbols) {
+	    var symbols = Object.getOwnPropertySymbols(object);
+	    if (enumerableOnly) symbols = symbols.filter(function (sym) {
+	      return Object.getOwnPropertyDescriptor(object, sym).enumerable;
+	    });
+	    keys.push.apply(keys, symbols);
+	  }
+
+	  return keys;
+	}
+
+	function _objectSpread2(target) {
+	  for (var i = 1; i < arguments.length; i++) {
+	    var source = arguments[i] != null ? arguments[i] : {};
+
+	    if (i % 2) {
+	      ownKeys(Object(source), true).forEach(function (key) {
+	        _defineProperty(target, key, source[key]);
+	      });
+	    } else if (Object.getOwnPropertyDescriptors) {
+	      Object.defineProperties(target, Object.getOwnPropertyDescriptors(source));
+	    } else {
+	      ownKeys(Object(source)).forEach(function (key) {
+	        Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key));
+	      });
+	    }
+	  }
+
+	  return target;
+	}
+
 	function _toConsumableArray(arr) {
-	  return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _nonIterableSpread();
+	  return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableSpread();
 	}
 
 	function _arrayWithoutHoles(arr) {
-	  if (Array.isArray(arr)) {
-	    for (var i = 0, arr2 = new Array(arr.length); i < arr.length; i++) arr2[i] = arr[i];
-
-	    return arr2;
-	  }
+	  if (Array.isArray(arr)) return _arrayLikeToArray(arr);
 	}
 
 	function _iterableToArray(iter) {
-	  if (Symbol.iterator in Object(iter) || Object.prototype.toString.call(iter) === "[object Arguments]") return Array.from(iter);
+	  if (typeof Symbol !== "undefined" && Symbol.iterator in Object(iter)) return Array.from(iter);
+	}
+
+	function _unsupportedIterableToArray(o, minLen) {
+	  if (!o) return;
+	  if (typeof o === "string") return _arrayLikeToArray(o, minLen);
+	  var n = Object.prototype.toString.call(o).slice(8, -1);
+	  if (n === "Object" && o.constructor) n = o.constructor.name;
+	  if (n === "Map" || n === "Set") return Array.from(o);
+	  if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen);
+	}
+
+	function _arrayLikeToArray(arr, len) {
+	  if (len == null || len > arr.length) len = arr.length;
+
+	  for (var i = 0, arr2 = new Array(len); i < len; i++) arr2[i] = arr[i];
+
+	  return arr2;
 	}
 
 	function _nonIterableSpread() {
-	  throw new TypeError("Invalid attempt to spread non-iterable instance");
+	  throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
 	}
 
-	var IS_BROWSER = typeof window !== 'undefined';
+	var IS_BROWSER = typeof window !== 'undefined' && typeof window.document !== 'undefined';
 	var WINDOW = IS_BROWSER ? window : {};
-	var IS_TOUCH_DEVICE = IS_BROWSER ? 'ontouchstart' in WINDOW.document.documentElement : false;
+	var IS_TOUCH_DEVICE = IS_BROWSER && WINDOW.document.documentElement ? 'ontouchstart' in WINDOW.document.documentElement : false;
 	var HAS_POINTER_EVENT = IS_BROWSER ? 'PointerEvent' in WINDOW : false;
 	var NAMESPACE = 'cropper'; // Actions
 
@@ -184,6 +243,7 @@ tpack.define("../node_modules/cropperjs/dist/cropper.common.js", function (requi
 	var MIME_TYPE_JPEG = 'image/jpeg'; // RegExps
 
 	var REGEXP_ACTIONS = /^e|w|s|n|se|sw|ne|nw|all|crop|move|zoom$/;
+	var REGEXP_DATA_URL = /^data:/;
 	var REGEXP_DATA_URL_JPEG = /^data:image\/jpeg;base64,/;
 	var REGEXP_TAG_NAME = /^img|canvas$/i; // Misc
 	// Inspired by the default width and height of a canvas element.
@@ -253,8 +313,8 @@ tpack.define("../node_modules/cropperjs/dist/cropper.common.js", function (requi
 	  minCanvasHeight: 0,
 	  minCropBoxWidth: 0,
 	  minCropBoxHeight: 0,
-	  minContainerWidth: 200,
-	  minContainerHeight: 100,
+	  minContainerWidth: MIN_CONTAINER_WIDTH,
+	  minContainerHeight: MIN_CONTAINER_HEIGHT,
 	  // Shortcuts of events
 	  ready: null,
 	  cropstart: null,
@@ -397,7 +457,7 @@ tpack.define("../node_modules/cropperjs/dist/cropper.common.js", function (requi
 	var REGEXP_DECIMALS = /\.\d*(?:0|9){12}\d*$/;
 	/**
 	 * Normalize decimal number.
-	 * Check out {@link http://0.30000000000000004.com/}
+	 * Check out {@link https://0.30000000000000004.com/}
 	 * @param {number} value - The value to normalize.
 	 * @param {number} [times=100000000000] - The times for normalizing.
 	 * @returns {number} Returns the normalized number.
@@ -800,8 +860,9 @@ tpack.define("../node_modules/cropperjs/dist/cropper.common.js", function (requi
 	 */
 
 	function getMaxZoomRatio(pointers) {
-	  var pointers2 = assign({}, pointers);
-	  var ratios = [];
+	  var pointers2 = _objectSpread2({}, pointers);
+
+	  var maxRatio = 0;
 	  forEach(pointers, function (pointer, pointerId) {
 	    delete pointers2[pointerId];
 	    forEach(pointers2, function (pointer2) {
@@ -812,13 +873,13 @@ tpack.define("../node_modules/cropperjs/dist/cropper.common.js", function (requi
 	      var z1 = Math.sqrt(x1 * x1 + y1 * y1);
 	      var z2 = Math.sqrt(x2 * x2 + y2 * y2);
 	      var ratio = (z2 - z1) / z1;
-	      ratios.push(ratio);
+
+	      if (Math.abs(ratio) > Math.abs(maxRatio)) {
+	        maxRatio = ratio;
+	      }
 	    });
 	  });
-	  ratios.sort(function (a, b) {
-	    return Math.abs(a) < Math.abs(b);
-	  });
-	  return ratios[0];
+	  return maxRatio;
 	}
 	/**
 	 * Get a pointer from an event object.
@@ -834,7 +895,7 @@ tpack.define("../node_modules/cropperjs/dist/cropper.common.js", function (requi
 	    endX: pageX,
 	    endY: pageY
 	  };
-	  return endOnly ? end : assign({
+	  return endOnly ? end : _objectSpread2({
 	    startX: pageX,
 	    startY: pageY
 	  }, end);
@@ -1197,8 +1258,6 @@ tpack.define("../node_modules/cropperjs/dist/cropper.common.js", function (requi
 	    case 8:
 	      rotate = -90;
 	      break;
-
-	    default:
 	  }
 
 	  return {
@@ -1224,11 +1283,13 @@ tpack.define("../node_modules/cropperjs/dist/cropper.common.js", function (requi
 	        options = this.options,
 	        container = this.container,
 	        cropper = this.cropper;
+	    var minWidth = Number(options.minContainerWidth);
+	    var minHeight = Number(options.minContainerHeight);
 	    addClass(cropper, CLASS_HIDDEN);
 	    removeClass(element, CLASS_HIDDEN);
 	    var containerData = {
-	      width: Math.max(container.offsetWidth, Number(options.minContainerWidth) || 200),
-	      height: Math.max(container.offsetHeight, Number(options.minContainerHeight) || 100)
+	      width: Math.max(container.offsetWidth, minWidth >= 0 ? minWidth : MIN_CONTAINER_WIDTH),
+	      height: Math.max(container.offsetHeight, minHeight >= 0 ? minHeight : MIN_CONTAINER_HEIGHT)
 	    };
 	    this.containerData = containerData;
 	    setStyle(cropper, {
@@ -1269,14 +1330,15 @@ tpack.define("../node_modules/cropperjs/dist/cropper.common.js", function (requi
 	      width: canvasWidth,
 	      height: canvasHeight
 	    };
-	    canvasData.left = (containerData.width - canvasWidth) / 2;
-	    canvasData.top = (containerData.height - canvasHeight) / 2;
-	    canvasData.oldLeft = canvasData.left;
-	    canvasData.oldTop = canvasData.top;
 	    this.canvasData = canvasData;
 	    this.limited = viewMode === 1 || viewMode === 2;
 	    this.limitCanvas(true, true);
-	    this.initialImageData = assign({}, imageData);
+	    canvasData.width = Math.min(Math.max(canvasData.width, canvasData.minWidth), canvasData.maxWidth);
+	    canvasData.height = Math.min(Math.max(canvasData.height, canvasData.minHeight), canvasData.maxHeight);
+	    canvasData.left = (containerData.width - canvasData.width) / 2;
+	    canvasData.top = (containerData.height - canvasData.height) / 2;
+	    canvasData.oldLeft = canvasData.left;
+	    canvasData.oldTop = canvasData.top;
 	    this.initialCanvasData = assign({}, canvasData);
 	  },
 	  limitCanvas: function limitCanvas(sizeLimited, positionLimited) {
@@ -1585,9 +1647,11 @@ tpack.define("../node_modules/cropperjs/dist/cropper.common.js", function (requi
 
 	var preview = {
 	  initPreview: function initPreview() {
-	    var crossOrigin = this.crossOrigin;
+	    var element = this.element,
+	        crossOrigin = this.crossOrigin;
 	    var preview = this.options.preview;
 	    var url = crossOrigin ? this.crossOriginUrl : this.url;
+	    var alt = element.alt || 'The image to preview';
 	    var image = document.createElement('img');
 
 	    if (crossOrigin) {
@@ -1595,6 +1659,7 @@ tpack.define("../node_modules/cropperjs/dist/cropper.common.js", function (requi
 	    }
 
 	    image.src = url;
+	    image.alt = alt;
 	    this.viewBox.appendChild(image);
 	    this.viewBoxImage = image;
 
@@ -1605,7 +1670,7 @@ tpack.define("../node_modules/cropperjs/dist/cropper.common.js", function (requi
 	    var previews = preview;
 
 	    if (typeof preview === 'string') {
-	      previews = this.element.ownerDocument.querySelectorAll(preview);
+	      previews = element.ownerDocument.querySelectorAll(preview);
 	    } else if (preview.querySelector) {
 	      previews = [preview];
 	    }
@@ -1625,6 +1690,7 @@ tpack.define("../node_modules/cropperjs/dist/cropper.common.js", function (requi
 	      }
 
 	      img.src = url;
+	      img.alt = alt;
 	      /**
 	       * Override img element styles
 	       * Add `display:block` to avoid margin top issue
@@ -1799,16 +1865,13 @@ tpack.define("../node_modules/cropperjs/dist/cropper.common.js", function (requi
 
 	var handlers = {
 	  resize: function resize() {
-	    var options = this.options,
-	        container = this.container,
-	        containerData = this.containerData;
-	    var minContainerWidth = Number(options.minContainerWidth) || MIN_CONTAINER_WIDTH;
-	    var minContainerHeight = Number(options.minContainerHeight) || MIN_CONTAINER_HEIGHT;
-
-	    if (this.disabled || containerData.width <= minContainerWidth || containerData.height <= minContainerHeight) {
+	    if (this.disabled) {
 	      return;
 	    }
 
+	    var options = this.options,
+	        container = this.container,
+	        containerData = this.containerData;
 	    var ratio = container.offsetWidth / containerData.width; // Resize when width changed or height changed
 
 	    if (ratio !== 1 || container.offsetHeight !== containerData.height) {
@@ -1874,10 +1937,10 @@ tpack.define("../node_modules/cropperjs/dist/cropper.common.js", function (requi
 	    var buttons = event.buttons,
 	        button = event.button;
 
-	    if (this.disabled // No primary button (Usually the left button)
-	    // Note that touch events have no `buttons` or `button` property
-	    || isNumber(buttons) && buttons !== 1 || isNumber(button) && button !== 0 // Open context menu
-	    || event.ctrlKey) {
+	    if (this.disabled // Handle mouse event and pointer event and ignore touch event
+	    || (event.type === 'mousedown' || event.type === 'pointerdown' && event.pointerType === 'mouse') && ( // No primary button (Usually the left button)
+	    isNumber(buttons) && buttons !== 1 || isNumber(button) && button !== 0 // Open context menu
+	    || event.ctrlKey)) {
 	      return;
 	    }
 
@@ -2056,8 +2119,6 @@ tpack.define("../node_modules/cropperjs/dist/cropper.common.js", function (requi
 	          }
 
 	          break;
-
-	        default:
 	      }
 	    };
 
@@ -2422,8 +2483,6 @@ tpack.define("../node_modules/cropperjs/dist/cropper.common.js", function (requi
 	        }
 
 	        break;
-
-	      default:
 	    }
 
 	    if (renderable) {
@@ -3205,9 +3264,7 @@ tpack.define("../node_modules/cropperjs/dist/cropper.common.js", function (requi
 
 	var AnotherCropper = WINDOW.Cropper;
 
-	var Cropper =
-	/*#__PURE__*/
-	function () {
+	var Cropper = /*#__PURE__*/function () {
 	  /**
 	   * Create a new Cropper.
 	   * @param {Element} element - The target element for cropping.
@@ -3256,7 +3313,7 @@ tpack.define("../node_modules/cropperjs/dist/cropper.common.js", function (requi
 
 	        if (!url) {
 	          return;
-	        } // e.g.: "http://example.com/img/picture.jpg"
+	        } // e.g.: "https://example.com/img/picture.jpg"
 
 
 	        url = element.src;
@@ -3288,13 +3345,23 @@ tpack.define("../node_modules/cropperjs/dist/cropper.common.js", function (requi
 	      if (!options.checkOrientation || !window.ArrayBuffer) {
 	        this.clone();
 	        return;
-	      } // Read ArrayBuffer from Data URL of JPEG images directly for better performance.
+	      } // Detect the mime type of the image directly if it is a Data URL
 
 
-	      if (REGEXP_DATA_URL_JPEG.test(url)) {
-	        this.read(dataURLToArrayBuffer(url));
+	      if (REGEXP_DATA_URL.test(url)) {
+	        // Read ArrayBuffer from Data URL of JPEG images directly for better performance
+	        if (REGEXP_DATA_URL_JPEG.test(url)) {
+	          this.read(dataURLToArrayBuffer(url));
+	        } else {
+	          // Only a JPEG image may contains Exif Orientation information,
+	          // the rest types of Data URLs are not necessary to check orientation at all.
+	          this.clone();
+	        }
+
 	        return;
-	      }
+	      } // 1. Detect the mime type of the image by a XMLHttpRequest.
+	      // 2. Load the image as ArrayBuffer for reading orientation if its a JPEG image.
+
 
 	      var xhr = new XMLHttpRequest();
 	      var clone = this.clone.bind(this);
@@ -3309,6 +3376,7 @@ tpack.define("../node_modules/cropperjs/dist/cropper.common.js", function (requi
 	      xhr.ontimeout = clone;
 
 	      xhr.onprogress = function () {
+	        // Abort the request directly if it not a JPEG image for better performance
 	        if (xhr.getResponseHeader('content-type') !== MIME_TYPE_JPEG) {
 	          xhr.abort();
 	        }
@@ -3372,19 +3440,16 @@ tpack.define("../node_modules/cropperjs/dist/cropper.common.js", function (requi
 	    value: function clone() {
 	      var element = this.element,
 	          url = this.url;
-	      var crossOrigin;
-	      var crossOriginUrl;
+	      var crossOrigin = element.crossOrigin;
+	      var crossOriginUrl = url;
 
 	      if (this.options.checkCrossOrigin && isCrossOriginURL(url)) {
-	        crossOrigin = element.crossOrigin;
+	        if (!crossOrigin) {
+	          crossOrigin = 'anonymous';
+	        } // Bust cache when there is not a "crossOrigin" property (#519)
 
-	        if (crossOrigin) {
-	          crossOriginUrl = url;
-	        } else {
-	          crossOrigin = 'anonymous'; // Bust cache when there is not a "crossOrigin" property
 
-	          crossOriginUrl = addTimestamp(url);
-	        }
+	        crossOriginUrl = addTimestamp(url);
 	      }
 
 	      this.crossOrigin = crossOrigin;
@@ -3396,6 +3461,7 @@ tpack.define("../node_modules/cropperjs/dist/cropper.common.js", function (requi
 	      }
 
 	      image.src = crossOriginUrl || url;
+	      image.alt = element.alt || 'The image to crop';
 	      this.image = image;
 	      image.onload = this.start.bind(this);
 	      image.onerror = this.stop.bind(this);
@@ -3407,11 +3473,13 @@ tpack.define("../node_modules/cropperjs/dist/cropper.common.js", function (requi
 	    value: function start() {
 	      var _this2 = this;
 
-	      var image = this.isImg ? this.element : this.image;
+	      var image = this.image;
 	      image.onload = null;
 	      image.onerror = null;
-	      this.sizing = true;
-	      var IS_SAFARI = WINDOW.navigator && /^(?:.(?!chrome|android))*safari/i.test(WINDOW.navigator.userAgent);
+	      this.sizing = true; // Match all browsers that use WebKit as the layout engine in iOS devices,
+	      // such as Safari for iOS, Chrome for iOS, and in-app browsers.
+
+	      var isIOSWebKit = WINDOW.navigator && /(?:iPad|iPhone|iPod).*?AppleWebKit/i.test(WINDOW.navigator.userAgent);
 
 	      var done = function done(naturalWidth, naturalHeight) {
 	        assign(_this2.imageData, {
@@ -3419,14 +3487,15 @@ tpack.define("../node_modules/cropperjs/dist/cropper.common.js", function (requi
 	          naturalHeight: naturalHeight,
 	          aspectRatio: naturalWidth / naturalHeight
 	        });
+	        _this2.initialImageData = assign({}, _this2.imageData);
 	        _this2.sizing = false;
 	        _this2.sized = true;
 
 	        _this2.build();
-	      }; // Modern browsers (except Safari)
+	      }; // Most modern browsers (excepts iOS WebKit)
 
 
-	      if (image.naturalWidth && !IS_SAFARI) {
+	      if (image.naturalWidth && !isIOSWebKit) {
 	        done(image.naturalWidth, image.naturalHeight);
 	        return;
 	      }
@@ -3438,15 +3507,15 @@ tpack.define("../node_modules/cropperjs/dist/cropper.common.js", function (requi
 	      sizingImage.onload = function () {
 	        done(sizingImage.width, sizingImage.height);
 
-	        if (!IS_SAFARI) {
+	        if (!isIOSWebKit) {
 	          body.removeChild(sizingImage);
 	        }
 	      };
 
-	      sizingImage.src = image.src; // iOS Safari will convert the image automatically
+	      sizingImage.src = image.src; // iOS WebKit will convert the image automatically
 	      // with its orientation once append it into DOM (#279)
 
-	      if (!IS_SAFARI) {
+	      if (!isIOSWebKit) {
 	        sizingImage.style.cssText = 'left:0;' + 'max-height:none!important;' + 'max-width:none!important;' + 'min-height:0!important;' + 'min-width:0!important;' + 'opacity:0;' + 'position:absolute;' + 'top:0;' + 'z-index:-1;';
 	        body.appendChild(sizingImage);
 	      }
@@ -3606,11 +3675,11 @@ tpack.define("../node_modules/cropperjs/dist/cropper.common.js", function (requi
 
 	assign(Cropper.prototype, render, preview, events, handlers, change, methods);
 
-	module.exports = Cropper;
+	export default Cropper;
 
 });
 
-tpack.define("index.js", function (require, exports, module) {
+TPack.define("index.js", function (require, exports, module) {
 	"use strict";
 	var __assign = (this && this.__assign) || function () {
 	    __assign = Object.assign || function(t) {
@@ -3623,9 +3692,9 @@ tpack.define("index.js", function (require, exports, module) {
 	    };
 	    return __assign.apply(this, arguments);
 	};
-	exports.__esModule = true;
+	Object.defineProperty(exports, "__esModule", { value: true });
 	require("../node_modules/cropperjs/dist/cropper.css");
-	var CropperJS = require("../node_modules/cropperjs/dist/cropper.common.js");
+	var cropperjs_1 = require("../node_modules/cropperjs/dist/cropper.esm.js");
 	var key = 0;
 	function getUuid() {
 	    key += 1;
@@ -3664,8 +3733,9 @@ tpack.define("index.js", function (require, exports, module) {
 	        this.bntRotateId = this.id + '-rotate';
 	        this.callback = callback;
 	        this.root = document.createElement('div');
+	        this.root.setAttribute('class', 'h5-cropper');
 	        this.root.setAttribute('style', 'opacity: 0; transition: all .4s;');
-	        this.root.innerHTML = "<div style=\"position: absolute;top: 0;left: 0;right: 0;bottom: 0;z-index: 1000;\">\n      <div style=\"position: absolute;top: 0;left: 0;right: 0;bottom: 5.3em;z-index: 1000; overflow: hidden;\">\n        <img id=\"" + this.id + "\" src=\"" + image + "\" alt=\"image\">\n      </div>\n      <div style=\"\n        position: absolute;left: 0;right: 0;bottom: 0;font-size: 1.3em;\n        display: flex;justify-content: space-between;\n        padding: 1.5em 1em;background: #232323;\"\n      >\n        <a href=\"javascript:;\" id=" + this.bntRotateId + " style=\"position: absolute; top: -2em; color: #fff; text-decoration: none; z-index: 1000;\">\n          <svg version=\"1.1\" width=\"1.5em\" id=\"Capa_1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" x=\"0px\"\n            y=\"0px\"\n            viewBox=\"0 0 393.382 393.382\" style=\"enable-background:new 0 0 393.382 393.382;\" xml:space=\"preserve\">\n            <path style=\"fill:#fff;\" d=\"M192.411,371.663H48.103C21.379,371.663,0,350.284,0,323.561V179.252\n            c0-26.724,21.379-48.103,48.103-48.103h144.308c26.724,0,48.103,21.379,48.103,48.103v144.308\n            C240.514,350.284,219.135,371.663,192.411,371.663z M48.103,163.218c-8.552,0-16.034,7.483-16.034,16.034v144.308\n            c0,8.552,7.483,16.034,16.034,16.034h144.308c8.552,0,16.034-7.483,16.034-16.034V179.252c0-8.552-7.483-16.034-16.034-16.034\n            H48.103z\"/>\n            <path style=\"fill:#fff;\" d=\"M321.754,266.906c-3.207,0-5.345-1.069-8.552-2.138c-7.483-4.276-9.621-14.965-5.345-22.448\n            c31-48.103,23.517-111.171-17.103-151.791S188.135,42.427,138.964,73.426c-7.483,4.276-17.103,2.138-22.448-5.345\n            c-4.276-7.483-2.138-17.103,5.345-22.448c60.93-38.482,140.032-29.931,191.342,21.379c51.31,51.31,59.861,129.343,21.379,191.342\n            C331.374,263.699,327.099,266.906,321.754,266.906z\"/>\n            <path style=\"fill:#fff;\" d=\"M315.34,287.216c-6.414,0-12.827-4.276-14.965-9.621l-25.655-61.999\n            c-3.207-8.552,1.069-17.103,8.552-21.379c8.552-3.207,17.103,1.069,21.379,8.552l19.241,47.034l47.034-19.241\n            c8.552-3.207,17.103,1.069,21.379,8.552c3.207,8.552-1.069,17.103-8.552,21.379l-61.999,25.655\n            C319.616,287.216,317.478,287.216,315.34,287.216z\"/>\n            </svg>\n        </a>\n        <a href=\"javascript:;\" id=" + this.bntCancelId + " style=\"color: #fff; text-decoration: none;\">\u53D6\u6D88</a>\n        <a href=\"javascript:;\" id=" + this.bntResetId + " style=\"color: #fff; text-decoration: none;\">\u8FD8\u539F</a>\n        <a href=\"javascript:;\" id=" + this.bntOkId + " style=\"color: #fff; text-decoration: none;\">\u5B8C\u6210</a>\n      </div>\n    </div>";
+	        this.root.innerHTML = "<div class='container' style=\"position: absolute;top: 0;left: 0;right: 0;bottom: 0;z-index: 1000;\">\n      <div class='content' style=\"position: absolute;top: 0;left: 0;right: 0;bottom: 5.3em;z-index: 1000; overflow: hidden;\">\n        <img id=\"" + this.id + "\" src=\"" + image + "\" alt=\"image\">\n      </div>\n      <div class='footer' style=\"\n        position: absolute;left: 0;right: 0;bottom: 0;font-size: 1.3em;\n        display: flex;justify-content: space-between;\n        padding: 1.5em 1em;background: #232323;\"\n      >\n        <a href=\"javascript:;\" id=" + this.bntRotateId + " style=\"position: absolute; top: -2em; color: #fff; text-decoration: none; z-index: 1000;\">\n          <svg version=\"1.1\" width=\"1.5em\" id=\"Capa_1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" x=\"0px\"\n            y=\"0px\"\n            viewBox=\"0 0 393.382 393.382\" style=\"enable-background:new 0 0 393.382 393.382;\" xml:space=\"preserve\">\n            <path style=\"fill:#fff;\" d=\"M192.411,371.663H48.103C21.379,371.663,0,350.284,0,323.561V179.252\n            c0-26.724,21.379-48.103,48.103-48.103h144.308c26.724,0,48.103,21.379,48.103,48.103v144.308\n            C240.514,350.284,219.135,371.663,192.411,371.663z M48.103,163.218c-8.552,0-16.034,7.483-16.034,16.034v144.308\n            c0,8.552,7.483,16.034,16.034,16.034h144.308c8.552,0,16.034-7.483,16.034-16.034V179.252c0-8.552-7.483-16.034-16.034-16.034\n            H48.103z\"/>\n            <path style=\"fill:#fff;\" d=\"M321.754,266.906c-3.207,0-5.345-1.069-8.552-2.138c-7.483-4.276-9.621-14.965-5.345-22.448\n            c31-48.103,23.517-111.171-17.103-151.791S188.135,42.427,138.964,73.426c-7.483,4.276-17.103,2.138-22.448-5.345\n            c-4.276-7.483-2.138-17.103,5.345-22.448c60.93-38.482,140.032-29.931,191.342,21.379c51.31,51.31,59.861,129.343,21.379,191.342\n            C331.374,263.699,327.099,266.906,321.754,266.906z\"/>\n            <path style=\"fill:#fff;\" d=\"M315.34,287.216c-6.414,0-12.827-4.276-14.965-9.621l-25.655-61.999\n            c-3.207-8.552,1.069-17.103,8.552-21.379c8.552-3.207,17.103,1.069,21.379,8.552l19.241,47.034l47.034-19.241\n            c8.552-3.207,17.103,1.069,21.379,8.552c3.207,8.552-1.069,17.103-8.552,21.379l-61.999,25.655\n            C319.616,287.216,317.478,287.216,315.34,287.216z\"/>\n            </svg>\n        </a>\n        <a href=\"javascript:;\" id=" + this.bntCancelId + " style=\"color: #fff; text-decoration: none;\">\u53D6\u6D88</a>\n        <a href=\"javascript:;\" id=" + this.bntResetId + " style=\"color: #fff; text-decoration: none;\">\u8FD8\u539F</a>\n        <a href=\"javascript:;\" id=" + this.bntOkId + " style=\"color: #fff; text-decoration: none;\">\u5B8C\u6210</a>\n      </div>\n    </div>";
 	        document.body.appendChild(this.root);
 	        // 初始化裁剪器
 	        this.init(document.getElementById(this.id), callback, options);
@@ -3676,9 +3746,9 @@ tpack.define("index.js", function (require, exports, module) {
 	    }
 	    H5Cropper.prototype.init = function ($image, callback, options) {
 	        var _this = this;
-	        this.cropper = new CropperJS($image, __assign({ viewMode: 1, cropBoxResizable: true, minCropBoxWidth: 100, dragMode: 'move', highlight: false, 
+	        this.cropper = new cropperjs_1.default($image, __assign(__assign({ viewMode: 1, cropBoxResizable: true, minCropBoxWidth: 100, dragMode: 'move', highlight: false, 
 	            // aspectRatio: 5 / 7,
-	            center: false, zoomOnTouch: false }, options, { ready: function (event) {
+	            center: false, zoomOnTouch: false }, options), { ready: function (event) {
 	                _this.root.setAttribute('style', 'opacity: 1; transition: all .4s;');
 	                options.read && options.read(event);
 	            } }));
@@ -3686,8 +3756,8 @@ tpack.define("index.js", function (require, exports, module) {
 	    return H5Cropper;
 	}());
 	window['H5Cropper'] = H5Cropper;
-	exports["default"] = H5Cropper;
+	exports.default = H5Cropper;
 
 });
 
-if (typeof module === "object" && module) { module.exports = tpack.require("index.js")} else { tpack.require("index.js")};//# sourceMappingURL=index.js.map
+TPack.require("index.js");//# sourceMappingURL=index.js.map
